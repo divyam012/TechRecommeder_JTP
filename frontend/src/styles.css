@@ -1,0 +1,338 @@
+:root {
+  --primary: #2c3e50;
+  --secondary: #3498db;
+  --background: #f8f9fa;
+  --text: #2c3e50;
+  --success: #27ae60;
+  --error: #e74c3c;
+  --border: #e0e0e0;
+}
+
+/* Base Styles */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+  background-color: var(--background);
+  color: var(--text);
+}
+
+/* App Container */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app-title {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+/* Form Styles */
+.device-form {
+  background: #fff;
+  padding: 1.2rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.07);
+  margin-bottom: 2rem;
+}
+
+.form-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.form-group.compact {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+
+.form-group.compact label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--primary);
+}
+
+.form-group.compact select,
+.form-group.compact input {
+  padding: 0.5rem 0.7rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  background: #f8f9fa;
+  transition: border-color 0.2s;
+  min-width: 90px;
+  max-width: 140px;
+}
+
+.form-group.compact select:focus,
+.form-group.compact input:focus {
+  border-color: var(--secondary);
+  outline: none;
+}
+
+/* Button Group Styling */
+.button-group.compact {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-end;
+  margin-left: 1rem;
+}
+
+.recommend-btn, .refresh-btn {
+  padding: 0.6rem 1.3rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.recommend-btn {
+  background: var(--secondary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
+}
+
+.recommend-btn:hover {
+  background: #217dbb;
+}
+
+.refresh-btn {
+  background: #f4f8fb;
+  color: var(--secondary);
+  border: 1.5px solid var(--secondary);
+}
+
+.refresh-btn:hover {
+  background: #eaf3fb;
+  color: #1761a0;
+}
+
+/* Similar Button */
+.similar-btn {
+  margin-top: 0.7rem;
+  padding: 0.5rem 1.1rem;
+  background: #f4f8fb;
+  color: #217dbb;
+  border: 1.5px solid #217dbb;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.similar-btn:hover {
+  background: #eaf3fb;
+  color: #1761a0;
+}
+
+/* Recommendations Row */
+.recommendations-row {
+  margin-top: 2rem;
+}
+
+.recommendations-flex {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+/* Recommendation Card */
+.recommendation-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(44, 62, 80, 0.08);
+  min-width: 320px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.2s;
+  border: 1px solid #e0e0e0;
+}
+
+.recommendation-card:hover {
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.15);
+}
+
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.brand {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.2rem;
+}
+
+.model {
+  font-size: 0.98rem;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.spec-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.spec-item {
+  background: #f4f8fb;
+  border-radius: 6px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.93rem;
+  color: #2c3e50;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+}
+
+/* Price Section */
+.price-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.price {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a73e8;
+  background: #eaf3fb;
+  padding: 0.4rem 1.1rem;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.07);
+}
+
+/* Error Handling */
+.error {
+  color: var(--error);
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  font-size: 0.95rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.7rem;
+  right: 1.1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #888;
+  cursor: pointer;
+}
+
+.similar-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Image Styles */
+.product-img {
+  width: 100%;
+  max-width: 180px;
+  display: block;
+  margin: 0.5rem auto 1rem auto;
+}
+
+/* Link Styles */
+.external-link {
+  display: inline-block;
+  margin-top: 0.7rem;
+  color: #217dbb;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .button-group.compact {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1rem;
+  }
+  .app-title {
+    font-size: 2rem;
+  }
+  .recommendation-card {
+    min-height: auto;
+  }
+  .price {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 1.75rem;
+  }
+  .device-form {
+    padding: 1.5rem;
+  }
+  .brand {
+    font-size: 1.2rem;
+  }
+}
+
+.similar-section {
+  margin-top: 0.7rem;
+}
