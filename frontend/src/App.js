@@ -73,7 +73,7 @@ function App() {
       setRecommendations20(data.recommendations);
       setShownIndices(new Set());
     } catch {
-      setError("Network error");
+      setError("No devices found.");
     }
   }
 
