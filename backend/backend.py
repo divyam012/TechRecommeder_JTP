@@ -20,14 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve static frontend files
-base_dir = os.path.dirname(__file__)
-frontend_dir = os.path.join(base_dir, "../frontend")
-app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
 
-@app.get("/")
-def serve_index():
-    return FileResponse("frontend/index.html")
+base_dir = os.path.dirname(__file__)
 
 # Load preprocessed data and scalers
 with open(os.path.join(base_dir, "laptop_components.pkl"), "rb") as f:
@@ -44,15 +38,15 @@ phone_df = phone_objects["df"]
 LAPTOP_USAGE_PROFILES = {
     "gaming": {"RAM": 3.0, "Storage": 2.5, "gpu_brand_score": 3.0, "num_cores": 2.5, "num_threads": 2.5},
     "business": {"RAM": 3.0, "Storage": 2.5, "num_cores": 2.5, "display_size": 2.0},
-    "basic": {"Price": -2.5, "RAM": 2.0, "Storage": 2.0, "display_size": 1.5},
-    "student": {"RAM": 2.5, "Storage": 2.5, "Price": -2.0, "num_cores": 2.0}
+    "basic": { "RAM": 2.0, "Storage": 2.0, "display_size": 1.5},
+    "student": {"RAM": 2.5, "Storage": 2.5, "num_cores": 2.0}
 }
 
 PHONE_USAGE_PROFILES = {
     "gaming": {"RAM": 3.5, "Storage": 3.0, "Battery": 3.0, "Rear_cam_mp": 1.0, "Front_cam_mp": 1.0, "5g": 1.5},
     "camera": {"Rear_cam_mp": 3.5, "Front_cam_mp": 2.5, "Num_rear_cam": 2.0, "RAM": 1.5, "Storage": 1.5, "Battery": 1.0},
     "business": {"Battery": 2.5, "RAM": 3.0, "Storage": 3.0, "5g": 2.0},
-    "basic": {"Battery": 2.0, "Price": -3.0, "RAM": 2.0, "Storage": 2.0, "5g": 1.0}
+    "basic": {"Battery": 2.0, "RAM": 2.0, "Storage": 2.0, "5g": 1.0}
 }
 
 @app.post("/recommend")
