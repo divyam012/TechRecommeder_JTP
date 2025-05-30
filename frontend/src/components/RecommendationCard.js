@@ -16,7 +16,9 @@ const RecommendationCard = (props) => {
     const formData = new FormData();
     formData.append("device_type", deviceType);
     formData.append("model", Model);
-    const res = await fetch("/similar", { method: "POST", body: formData });
+
+    const apiUrl = process.env.REACT_APP_API_URL || '';
+    const res = await fetch(`${apiUrl}/similar`, { method: "POST", body: formData });
     if (res.ok) {
       const data = await res.json();
       setSimilar(data.recommendations);

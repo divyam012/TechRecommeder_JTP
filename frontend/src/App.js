@@ -60,7 +60,8 @@ function App() {
     formData.append("usage_type", usageType);
 
     try {
-      const response = await fetch("/recommend", {
+      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const response = await fetch(`${apiUrl}/recommend`, {
         method: "POST",
         body: formData,
       });
