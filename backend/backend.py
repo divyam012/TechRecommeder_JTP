@@ -85,25 +85,12 @@ async def recommend_form(
         df_filtered = laptop_df[laptop_df['Price'] <= budget].copy()
         df_filtered = df_filtered[~df_filtered['Model'].isin(exclude_models_set)]
         
-        # If no laptops found, find closest above budget
+        
+        # If budget is too low, return an error
         if df_filtered.empty:
-            df_above = laptop_df[laptop_df['Price'] > budget].copy()
-            df_above = df_above[~df_above['Model'].isin(exclude_models_set)]
-            
-            if df_above.empty:
-                return JSONResponse(
-                    content={"error": "No laptops found in the database."}, 
-                    status_code=404
-                )
-                
-            df_above['Price_Diff'] = df_above['Price'] - budget
-            closest_matches = df_above.nsmallest(5, 'Price_Diff')
             return JSONResponse(
-                content={
-                    "error": "No laptops found within your budget. Showing closest matches above your budget.",
-                    "recommendations": closest_matches.drop(columns=['Price_Diff']).to_dict(orient="records")
-                },
-                status_code=200
+                content={"error": "No laptops found within your budget."}, 
+                status_code=404
             )
 
         # Normalize features
