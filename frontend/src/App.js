@@ -22,18 +22,24 @@ function App() {
   // Helper to pick 5 new recommendations that haven't been shown yet
   const pickFiveNew = useCallback(
     (shown) => {
-      if (!recommendations20.length) return { picked: [], newShown: shown };
+      // Add array check before mapping
+      if (!Array.isArray(recommendations20) || recommendations20.length === 0) {
+        return { picked: [], newShown: shown };
+      }
+      
       // Find indices not yet shown
       let available = recommendations20
         .map((_, idx) => idx)
         .filter((i) => !shown.has(i));
-      let pool = available,
-        newShown = new Set(shown);
+      let pool = available;
+      let newShown = new Set(shown);
+      
       // If less than 5 left, reset pool
       if (available.length < 5) {
         newShown = new Set();
-        pool = recommendations20.map((_, idx) => idx);
+        pool = [...Array(recommendations20.length).keys()]; // Create array of indices
       }
+      
       // Randomly pick 5
       const picked = [];
       while (picked.length < 5 && pool.length) {
@@ -65,16 +71,25 @@ function App() {
         method: "POST",
         body: formData,
       });
+      
       if (!response.ok) {
         const errData = await response.json();
         setError(errData.error || "Error fetching recommendations");
+        setRecommendations20([]); // Clear recommendations on error
         return;
       }
+      
       const data = await response.json();
-      setRecommendations20(data.recommendations);
+      // Ensure we always have an array
+      const recs = Array.isArray(data.recommendations) 
+        ? data.recommendations 
+        : [];
+      
+      setRecommendations20(recs);
       setShownIndices(new Set());
-    } catch {
+    } catch (err) {
       setError("No devices found.");
+      setRecommendations20([]); // Clear recommendations on error
     }
   }
 
@@ -85,10 +100,12 @@ function App() {
 
   // Handle Refresh button
   function onRefresh() {
-    if (!recommendations20.length) {
+    // Check if recommendations exist
+    if (!Array.isArray(recommendations20) || recommendations20.length === 0) {
       setError("No recommendations to refresh. Please click Recommend first.");
       return;
     }
+    
     const { picked, newShown } = pickFiveNew(shownIndices);
     setCurrentFive(picked);
     setShownIndices(newShown);
@@ -96,7 +113,8 @@ function App() {
 
   // When recommendations change, show a fresh set of 5
   useEffect(() => {
-    if (recommendations20.length) {
+    // Only process if we have valid recommendations
+    if (Array.isArray(recommendations20) && recommendations20.length) {
       const { picked, newShown } = pickFiveNew(new Set());
       setCurrentFive(picked);
       setShownIndices(newShown);
@@ -142,7 +160,8 @@ function App() {
             >
               <option value="">--Select--</option>
               {deviceType &&
-                USAGE_OPTIONS[deviceType].map((usage) => (
+                // Safe access to usage options
+                USAGE_OPTIONS[deviceType]?.map((usage) => (
                   <option key={usage} value={usage}>
                     {usage.charAt(0).toUpperCase() + usage.slice(1)}
                   </option>
@@ -182,9 +201,10 @@ function App() {
       <div className="recommendations-row">
         {currentFive.length > 0 && <h2>Top Recommendations:</h2>}
         <div className="recommendations-flex">
-          {currentFive.map((rec, idx) => (
+          {/* Safe rendering of cards */}
+          {Array.isArray(currentFive) && currentFive.map((rec, idx) => (
             <RecommendationCard
-              key={`${rec.Brand}-${rec.Model}-${idx}`}
+              key={`${rec?.Brand || 'brand'}-${rec?.Model || 'model'}-${idx}`}
               {...rec}
               deviceType={deviceType}
             />

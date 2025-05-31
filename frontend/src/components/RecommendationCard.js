@@ -13,17 +13,35 @@ const RecommendationCard = (props) => {
     setLoading(true);
     setShowSimilar(true);
     setSimilar([]);
+    
+    // Validate model exists
+    if (!Model) {
+      setLoading(false);
+      return;
+    }
+    
     const formData = new FormData();
     formData.append("device_type", deviceType);
     formData.append("model", Model);
 
-    const apiUrl = process.env.REACT_APP_API_URL || '';
-    const res = await fetch(`${apiUrl}/similar`, { method: "POST", body: formData });
-    if (res.ok) {
-      const data = await res.json();
-      setSimilar(data.recommendations);
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const res = await fetch(`${apiUrl}/similar`, { 
+        method: "POST", 
+        body: formData 
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        // Ensure recommendations is always an array
+        setSimilar(Array.isArray(data?.recommendations) ? data.recommendations : []);
+      }
+    } catch (error) {
+      console.error("Error fetching similar items:", error);
+      setSimilar([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const closeModal = () => {
@@ -31,79 +49,111 @@ const RecommendationCard = (props) => {
     setSimilar([]);
   };
 
-  const baseModel = Model && Model.split('(')[0].trim();
+  // Safely handle model names
+  const baseModel = Model ? Model.split('(')[0].trim() : "Unknown Model";
 
   // Render specs for both main and similar cards
-  const renderSpecs = (item) => (
-    item.deviceType === "laptop" ? (
+  const renderSpecs = (item) => {
+    // Add safety checks for all properties
+    const safeItem = item || {};
+    
+    return deviceType === "laptop" ? (
       <>
-        {(item.processor_brand || item.processor_tier) && (
+        {(safeItem.processor_brand || safeItem.processor_tier) && (
           <div className="spec-item">
-            {item.processor_brand ? item.processor_brand : ""}
-            {item.processor_tier ? ` ${item.processor_tier}` : ""}
-            {item.processor_gen ? ` Gen ${item.processor_gen}` : ""}
+            {safeItem.processor_brand || ""}
+            {safeItem.processor_tier ? ` ${safeItem.processor_tier}` : ""}
+            {safeItem.processor_gen ? ` Gen ${safeItem.processor_gen}` : ""}
           </div>
         )}
-        {(item.RAM || item.Storage) && (
+        {(safeItem.RAM || safeItem.Storage) && (
           <div className="spec-item">
-            {item.RAM ? `${item.RAM}GB` : ""}{item.Storage ? ` / ${item.Storage}GB` : ""}{item.Primary_Storage_Type ? ` ${item.Primary_Storage_Type}`.toUpperCase() : ""}
+            {safeItem.RAM ? `${safeItem.RAM}GB` : ""}
+            {safeItem.Storage ? ` / ${safeItem.Storage}GB` : ""}
+            {safeItem.Primary_Storage_Type ? ` ${safeItem.Primary_Storage_Type.toUpperCase()}` : ""}
           </div>
         )}
-        {item.display_size && <div className="spec-item">{item.display_size}″</div>}
+        {safeItem.display_size && <div className="spec-item">{safeItem.display_size}″</div>}
       </>
     ) : (
       <>
-        {(item.RAM || item.Storage) && (
+        {(safeItem.RAM || safeItem.Storage) && (
           <div className="spec-item">
-            {item.RAM ? `${item.RAM}GB` : ""}{item.Storage ? ` / ${item.Storage}GB` : ""}
+            {safeItem.RAM ? `${safeItem.RAM}GB` : ""}
+            {safeItem.Storage ? ` / ${safeItem.Storage}GB` : ""}
           </div>
         )}
-        {item.Battery && <div className="spec-item">{item.Battery} mAh</div>}
-        {item.Rear_cam_mp && <div className="spec-item">{item.Rear_cam_mp}MP{item.Num_rear_cam ? ` (${item.Num_rear_cam} cameras)` : ""}</div>}
-        {item.Front_cam_mp && <div className="spec-item">Front {item.Front_cam_mp}MP</div>}
-        {item.display_size && <div className="spec-item">{item.display_size}″</div>}
-        {item.fiveg !== undefined && item.fiveg !== null && item.fiveg && <div className="spec-item">5G</div>}
+        {safeItem.Battery && <div className="spec-item">{safeItem.Battery} mAh</div>}
+        {safeItem.Rear_cam_mp && (
+          <div className="spec-item">
+            {safeItem.Rear_cam_mp}MP
+            {safeItem.Num_rear_cam ? ` (${safeItem.Num_rear_cam} cameras)` : ""}
+          </div>
+        )}
+        {safeItem.Front_cam_mp && <div className="spec-item">Front {safeItem.Front_cam_mp}MP</div>}
+        {safeItem.display_size && <div className="spec-item">{safeItem.display_size}″</div>}
+        {safeItem.fiveg && <div className="spec-item">5G</div>}
       </>
-    )
-  );
+    );
+  };
 
   return (
     <div className="recommendation-card">
       <div className="card-header">
-        <div className="brand">{Brand}</div>
+        <div className="brand">{Brand || "Unknown Brand"}</div>
         <div className="model">{baseModel}</div>
       </div>
       <div className="spec-grid">
         {renderSpecs(props)}
       </div>
       <div className="price-section">
-        <span className="price">₹{Number(Price).toLocaleString('en-IN')}</span>
+        <span className="price">
+          ₹{Price ? Number(Price).toLocaleString('en-IN') : "N/A"}
+        </span>
       </div>
-      <button className="similar-btn" onClick={fetchSimilar}>
+      <button 
+        className="similar-btn" 
+        onClick={fetchSimilar}
+        disabled={!Model}  // Disable if no model
+      >
         {loading ? "Loading..." : "Show Similar Items"}
       </button>
+      
       {showSimilar && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <button className="close-btn" onClick={closeModal}>×</button>
             <h4>Similar Items:</h4>
             <div className="similar-cards">
-              {similar.length === 0 && loading && <div>Loading...</div>}
-              {similar.length === 0 && !loading && <div>No similar items found.</div>}
-              {similar.map((item, idx) => (
-                <div key={idx} className="recommendation-card">
-                  <div className="card-header">
-                    <div className="brand">{item.Brand}</div>
-                    <div className="model">{item.Model && item.Model.split('(')[0].trim()}</div>
+              {loading && <div>Loading...</div>}
+              
+              {!loading && similar.length === 0 && (
+                <div>No similar items found.</div>
+              )}
+              
+              {!loading && similar.length > 0 && similar.map((item, idx) => {
+                // Safe model name handling
+                const similarModel = item?.Model 
+                  ? item.Model.split('(')[0].trim() 
+                  : "Unknown Model";
+                  
+                return (
+                  <div key={`${item?.Brand || idx}-${item?.Model || idx}`} className="recommendation-card">
+                    <div className="card-header">
+                      <div className="brand">{item?.Brand || "Unknown Brand"}</div>
+                      <div className="model">{similarModel}</div>
+                    </div>
+                    <div className="spec-grid">
+                      {renderSpecs({ ...item, deviceType })}
+                    </div>
+                    <div className="price-section">
+                      <span className="price">
+                        ₹{item?.Price ? Number(item.Price).toLocaleString('en-IN') : "N/A"}
+                      </span>
+                    </div>
                   </div>
-                  <div className="spec-grid">
-                    {renderSpecs({ ...item, deviceType })}
-                  </div>
-                  <div className="price-section">
-                    <span className="price">₹{Number(item.Price).toLocaleString('en-IN')}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
